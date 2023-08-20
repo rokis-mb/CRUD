@@ -1,13 +1,13 @@
 import Button from 'react-bootstrap/Button'
 import React, { useContext, useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
-import AgentContext from '../Context/AgentState'
+import AgentContext from '../Context/AgentContextProvider'
 // import '../CSS/AgentTable.css'
 
 const AgentTable = () => {
     // const {allow, setAllow, initialValue, verify, setVerify} = useContext(AgentContext)
     const [agent, setAgent] = useState([])
-    // const { allow } = useContext(AgentContext);
+    const { allow, setAllow } = useContext(AgentContext);
 
     // Fetching data from the api
 
