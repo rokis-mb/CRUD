@@ -4,22 +4,19 @@ export const AgentContext = createContext()
 
 const AgentContextProvider = (props) => {
 
-    const [allow, setAllow] = useState(false)
-    const [verify, setVerify] = useState(true)
-
-    const [initialValue, setInitialValue] = useState({
+    const [agent, setAgent] = useState({
 
         AuthCode: "r1d3r",
         Flag: "i",
-        UserID: 0,
+        UserID: "1",
         AgentCode: "",
         FullName: "",
         UserName: "",
         Password: "",
         Image: "",
         Address: "",
-        District: 0,
-        StarGrading: 0,
+        District: "",
+        StarGrading: "",
         Academic: "",
         Professional: "",
         WorkExp: "",
@@ -27,15 +24,14 @@ const AgentContextProvider = (props) => {
         ProductCat: "",
         ProductType: "",
         Statement: "",
-        Contact: 0,
-        AllowApp: "",
-
+        Contact: "",
+        AllowApp: ""
     })
 
     const [updateAgent, setUpdateAgent] = useState({
         AuthCode: "r1d3r",
         Flag: "U",
-        UserID: "",
+        UserID: "1",
         AgentID: "",
         FullName: "",
         Image: "",
@@ -49,15 +45,11 @@ const AgentContextProvider = (props) => {
         ProductCat: "",
         ProductType: "",
         Statement: "",
-        Contact: "",
+        Contact: ""   
     });
 
-    const [formValue, setFormValue] = useState(initialValue)
-    const [AgentList, setAgentlist] = useState([])
-
-
     const contextValue = {
-        allow, setAllow, verify, setVerify, initialValue,setInitialValue, updateAgent, setUpdateAgent
+        agent, setAgent, updateAgent, setUpdateAgent,
     };
     return (
         <AgentContext.Provider value={contextValue}>

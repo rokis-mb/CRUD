@@ -2,7 +2,7 @@ import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import AgentForm from './AgentForm';
+import CreateAgentForm from './CreateAgentForm';
 import Modal from 'react-bootstrap/Modal';
 import AgentTable from './AgentTable';
 import { AgentContext } from '../Context/AgentContextProvider';
@@ -15,7 +15,7 @@ const AgentList = () => {
 
     // States
     const [show, setShow] = useState(false);
-    const { initialValue } = useContext(AgentContext);
+    const { setAgent } = useContext(AgentContext);
 
 
     const handleClose = () => {
@@ -28,11 +28,11 @@ const AgentList = () => {
 
     function handleAddButton(){
         handleClose();
-        createAgent(initialValue);
+        createAgent(setAgent);
     }
 
     async function createAgent(data) {
-        const res = await fetch("https://testing.esnep.com/happyhomes/api/admin/user", {
+        const res = await fetch("https://testing.esnep.com/happyhomes/api/admin/agent", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -57,7 +57,7 @@ const AgentList = () => {
                     <Modal.Title>Super Agent</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <AgentForm />
+                    <CreateAgentForm />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="primary" onClick={handleAddButton}>

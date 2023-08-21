@@ -1,10 +1,10 @@
 import Button from 'react-bootstrap/Button'
 import { useContext, useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
-import EditForm from './EditForm'
 import Modal from 'react-bootstrap/Modal';
 import { AgentContext } from '../Context/AgentContextProvider';
-import FormControl from './FormControl';
+import EditAgentForm from './EditAgentForm';
+
 // import '../CSS/AgentTable.css'
 
 const AgentTable = () => {
@@ -29,7 +29,8 @@ const AgentTable = () => {
     }
 
     async function updateAgentData(data) {
-        const res = await fetch("https://testing.esnep.com/happyhomes/api/admin/user", {
+        try {
+            const res = await fetch("https://testing.esnep.com/happyhomes/api/admin/agent", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -37,36 +38,41 @@ const AgentTable = () => {
             },
             body: JSON.stringify({ data })
         })
+        } catch (error) {
+            console.log(error)
+        }
+        
     }
 
     // Fetching data from the api
 
     const getAgents = async () => {
         try {
-            const res = await fetch("https://testing.esnep.com/happyhomes/api/admin/user", {
+            const res = await fetch("https://testing.esnep.com/happyhomes/api/admin/agent", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Signature": "p0m76"
                 },
                 body: JSON.stringify({
-                    "UserID": "-1",
+                    "AuthCode": "r1d3r",
                     "Flag": "S",
-                    "IsAllow": "-1",
-                    "IsVerified": "-1",
-                    "UserType": "-1",
-                    "AuthCode": "r1d3r"
+                    "UserID": "-1", 
+                    "IsActive": "-1", 
+                    "AllowApp": "-1"
                 })
             })
             const data = await res.json();
+            // console.log(data.Values[0].AllowApp)
             const agentsWithAllowStatus = data.Values.map(agent => {
                 return {
                     ...agent,
-                    isAllowed: agent.IsAllow === "Y" ? true : false,
+                    isAllowed: agent.AllowApp === "Y" ? true : false,
                     isActivated: agent.IsActive === "A" ? true : false
                 };
             });
             setAgent(agentsWithAllowStatus);
+            // console.log(agentsWithAllowStatus)
         } catch (error) {
             console.log(error)
         }
@@ -81,8 +87,7 @@ const AgentTable = () => {
     const columns = [
         {
             name: "S.N",
-            selector: (row) => row.MemID,
-            sortable: "true"
+            cell: (row, index) => index + 1,
         },
         {
             name: "Fullname",
@@ -92,12 +97,12 @@ const AgentTable = () => {
         },
         {
             name: "Agent Code",
-            selector: (row) => row.FiscallID,
+            selector: (row) => row.AgentCode,
             sortable: "true"
         },
         {
             name: "Total Property",
-            selector: (row) => row.DefHouseNum,
+            selector: (row) => row.NoOfProperty,
             sortable: "true"
         },
         {
@@ -139,7 +144,7 @@ const AgentTable = () => {
                     <Modal.Title>Edit Agent</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {selectedAgent && <FormControl agent={selectedAgent} />}
+                    {selectedAgent && <EditAgentForm agent={selectedAgent} />}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="primary" onClick={handleEditButtonClick}>
@@ -152,31 +157,23 @@ const AgentTable = () => {
 }
 
 function Allow({ data }) {
+
     const [isAllowed, setIsAllowed] = useState(data.isAllowed);
-    // console.log(data)
-    async function allow(shouldAllow) {
-        setIsAllowed(!shouldAllow); //client side
+    async function allow(shouldAAllow) {
+        setIsAllowed(!shouldAAllow); //client side
         //backend
-        const res = await fetch("https://testing.esnep.com/happyhomes/api/admin/user", {
+        const res = await fetch("https://testing.esnep.com/happyhomes/api/admin/agent", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Signature": "p0m76"
             },
             body: JSON.stringify({
-
-                // "UserID": data.MemID.toString(),
-                // "Flag": "AD",
-                // "IsAllow": shouldAllow ? "Y" : "N",
-                // "MemID": data.MemID.toString(),
-                // "AuthCode": "r1d3r"
-
                 "AuthCode": "r1d3r",
                 "Flag": "AD",
-                "AgentID": data.MemID.toString(),
-                "AllowApp": shouldAllow ? "Y" : "N",
-
-            })
+                "AgentID": data.AgentID.toString(),
+                "AllowApp": shouldAAllow ? "A" : "D",
+            }),
         })
     }
     return (
@@ -192,25 +189,17 @@ function Active({ data }) {
     async function activate(shouldActivate) {
         setIsActivated(!shouldActivate); //client side
         //backend
-        const res = await fetch("https://testing.esnep.com/happyhomes/api/admin/user", {
+        const res = await fetch("https://testing.esnep.com/happyhomes/api/admin/agent", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Signature": "p0m76"
             },
             body: JSON.stringify({
-
-                // "UserID": data.MemID.toString(),
-                // "Flag": "AI",
-                // "IsActive": shouldActivate ? "A" : "I",
-                // "MemID": data.MemID.toString(),
-                // "AuthCode": "r1d3r"
-
                 "AuthCode": "r1d3r",
                 "Flag": "AD",
-                "AgentID": data.MemID.toString(),
+                "AgentID": data.AgentID.toString(),
                 "IsActive": shouldActivate ? "A" : "I",
-
             })
         })
     }
