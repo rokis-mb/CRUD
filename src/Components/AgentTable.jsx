@@ -1,13 +1,43 @@
 import Button from 'react-bootstrap/Button'
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
-import AgentContext from '../Context/AgentContextProvider'
+import EditForm from './EditForm'
+import Modal from 'react-bootstrap/Modal';
+import { AgentContext } from '../Context/AgentContextProvider';
+import FormControl from './FormControl';
 // import '../CSS/AgentTable.css'
 
 const AgentTable = () => {
-    // const {allow, setAllow, initialValue, verify, setVerify} = useContext(AgentContext)
-    const [agent, setAgent] = useState([])
-    const { allow, setAllow } = useContext(AgentContext);
+    const [agent, setAgent] = useState([]);
+    const [selectedAgent, setSelectedAgent] = useState();
+    const { updateAgent } = useContext(AgentContext);
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => {
+        setShow(false)
+        setSelectedAgent(null)
+    }
+
+    const handleOpen = (agent) => {
+        setSelectedAgent(agent)
+        setShow(true)
+    }
+
+    function handleEditButtonClick() {
+        handleClose();
+        updateAgentData(updateAgent);
+    }
+
+    async function updateAgentData(data) {
+        const res = await fetch("https://testing.esnep.com/happyhomes/api/admin/user", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Signature": "p0m76"
+            },
+            body: JSON.stringify({ data })
+        })
+    }
 
     // Fetching data from the api
 
@@ -45,6 +75,7 @@ const AgentTable = () => {
     // calling the agents function during rendering
     useEffect(() => {
         getAgents();
+        // console.log(agent)
     }, [])
 
     const columns = [
@@ -85,7 +116,7 @@ const AgentTable = () => {
             width: "250px", // Adjust the width as needed
             cell: (row) => (
                 <div className='d-flex'>
-                    <Button className="btn btn-info">Edit</Button>&nbsp;
+                    <Button onClick={() => handleOpen(row)} className="btn btn-info">Edit</Button>&nbsp;
                     <Button className="btn btn-warning">Reset Password</Button>
                 </div>
             )
@@ -93,19 +124,36 @@ const AgentTable = () => {
     ]
 
     return (
-        <DataTable columns={columns} data={agent}
-            pagination
-            fixedHeader
-            fixedHeaderScrollHeight='600px'
-            selectableRows
-            selectableRowsHighlight
-        />
+        <>
+
+            <DataTable columns={columns} data={agent}
+                // pagination
+                fixedHeader
+                fixedHeaderScrollHeight='600px'
+                selectableRows
+                selectableRowsHighlight
+            />
+
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Edit Agent</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {selectedAgent && <FormControl agent={selectedAgent} />}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={handleEditButtonClick}>
+                        Edit
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </>
     )
 }
 
 function Allow({ data }) {
     const [isAllowed, setIsAllowed] = useState(data.isAllowed);
-    console.log(data)
+    // console.log(data)
     async function allow(shouldAllow) {
         setIsAllowed(!shouldAllow); //client side
         //backend
@@ -116,13 +164,18 @@ function Allow({ data }) {
                 "Signature": "p0m76"
             },
             body: JSON.stringify({
-                
-                    "UserID": data.MemID.toString(),
-                    "Flag": "AD",
-                    "IsAllow": shouldAllow?"Y":"N", 
-                    "MemID": data.MemID.toString(),
-                    "AuthCode": "r1d3r"
-                  
+
+                // "UserID": data.MemID.toString(),
+                // "Flag": "AD",
+                // "IsAllow": shouldAllow ? "Y" : "N",
+                // "MemID": data.MemID.toString(),
+                // "AuthCode": "r1d3r"
+
+                "AuthCode": "r1d3r",
+                "Flag": "AD",
+                "AgentID": data.MemID.toString(),
+                "AllowApp": shouldAllow ? "Y" : "N",
+
             })
         })
     }
@@ -135,7 +188,7 @@ function Allow({ data }) {
 
 function Active({ data }) {
     const [isActivated, setIsActivated] = useState(data.isActivated);
-    console.log(data)
+    // console.log(data)
     async function activate(shouldActivate) {
         setIsActivated(!shouldActivate); //client side
         //backend
@@ -146,18 +199,23 @@ function Active({ data }) {
                 "Signature": "p0m76"
             },
             body: JSON.stringify({
-                
-                    "UserID": data.MemID.toString(),
-                    "Flag": "AD",
-                    "IsActive": shouldActivate?"A":"I", 
-                    "MemID": data.MemID.toString(),
-                    "AuthCode": "r1d3r"
-                  
+
+                // "UserID": data.MemID.toString(),
+                // "Flag": "AI",
+                // "IsActive": shouldActivate ? "A" : "I",
+                // "MemID": data.MemID.toString(),
+                // "AuthCode": "r1d3r"
+
+                "AuthCode": "r1d3r",
+                "Flag": "AD",
+                "AgentID": data.MemID.toString(),
+                "IsActive": shouldActivate ? "A" : "I",
+
             })
         })
     }
     return (
-        <span className={`uk-badge ${isActivated ? 'uk-badge-success' : 'uk-badge-danger' }` } onClick={() => activate(isActivated)}>
+        <span className={`uk-badge ${isActivated ? 'uk-badge-success' : 'uk-badge-danger'}`} onClick={() => activate(isActivated)}>
             {isActivated ? 'Activate' : 'Deactivate'}
         </span>
     )
