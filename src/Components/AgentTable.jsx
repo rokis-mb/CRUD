@@ -10,7 +10,7 @@ import EditAgentForm from './EditAgentForm';
 const AgentTable = () => {
     const [agent, setAgent] = useState([]);
     const [selectedAgent, setSelectedAgent] = useState();
-    const { updateAgent } = useContext(AgentContext);
+    const { updateAgent, agentInfo, setAgentInfo } = useContext(AgentContext);
     const [show, setShow] = useState(false);
 
     const handleClose = () => {
@@ -19,7 +19,29 @@ const AgentTable = () => {
     }
 
     const handleOpen = (agent) => {
+        async function getAgentInfo() {
+            try {
+                const res = await fetch("https://testing.esnep.com/happyhomes/api/admin/agent", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Signature": "p0m76"
+                    },
+                    body: JSON.stringify({
+                        "AuthCode": "r1d3r",
+                        "Flag": "SI",
+                        "AgentID": agent.AgentID + ""
+                    }),
+                })
+                const data = await res.json();
+                setAgentInfo(data)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        getAgentInfo()
         setSelectedAgent(agent)
+        console.log(selectedAgent)
         setShow(true)
     }
 
@@ -29,19 +51,20 @@ const AgentTable = () => {
     }
 
     async function updateAgentData(data) {
+        console.log(data)
         try {
-            const res = await fetch("https://testing.esnep.com/happyhomes/api/admin/agent", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Signature": "p0m76"
-            },
-            body: JSON.stringify({ data })
-        })
+            await fetch("https://testing.esnep.com/happyhomes/api/admin/agent", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Signature": "p0m76"
+                },
+                body: JSON.stringify(data)
+            })
         } catch (error) {
             console.log(error)
         }
-        
+
     }
 
     // Fetching data from the api
@@ -57,8 +80,8 @@ const AgentTable = () => {
                 body: JSON.stringify({
                     "AuthCode": "r1d3r",
                     "Flag": "S",
-                    "UserID": "-1", 
-                    "IsActive": "-1", 
+                    "UserID": "-1",
+                    "IsActive": "-1",
                     "AllowApp": "-1"
                 })
             })
@@ -72,7 +95,6 @@ const AgentTable = () => {
                 };
             });
             setAgent(agentsWithAllowStatus);
-            // console.log(agentsWithAllowStatus)
         } catch (error) {
             console.log(error)
         }
@@ -81,7 +103,6 @@ const AgentTable = () => {
     // calling the agents function during rendering
     useEffect(() => {
         getAgents();
-        // console.log(agent)
     }, [])
 
     const columns = [
@@ -144,7 +165,7 @@ const AgentTable = () => {
                     <Modal.Title>Edit Agent</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {selectedAgent && <EditAgentForm agent={selectedAgent} />}
+                    <EditAgentForm agent={agentInfo} />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="primary" onClick={handleEditButtonClick}>
@@ -162,7 +183,7 @@ function Allow({ data }) {
     async function allow(shouldAAllow) {
         setIsAllowed(!shouldAAllow); //client side
         //backend
-        const res = await fetch("https://testing.esnep.com/happyhomes/api/admin/agent", {
+        await fetch("https://testing.esnep.com/happyhomes/api/admin/agent", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -172,7 +193,7 @@ function Allow({ data }) {
                 "AuthCode": "r1d3r",
                 "Flag": "AD",
                 "AgentID": data.AgentID.toString(),
-                "AllowApp": shouldAAllow ? "A" : "D",
+                "AllowApp": !shouldAAllow ? "Y" : "N",
             }),
         })
     }
@@ -189,7 +210,7 @@ function Active({ data }) {
     async function activate(shouldActivate) {
         setIsActivated(!shouldActivate); //client side
         //backend
-        const res = await fetch("https://testing.esnep.com/happyhomes/api/admin/agent", {
+        await fetch("https://testing.esnep.com/happyhomes/api/admin/agent", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -197,9 +218,9 @@ function Active({ data }) {
             },
             body: JSON.stringify({
                 "AuthCode": "r1d3r",
-                "Flag": "AD",
+                "Flag": "AI",
                 "AgentID": data.AgentID.toString(),
-                "IsActive": shouldActivate ? "A" : "I",
+                "IsActive": !shouldActivate ? "A" : "I",
             })
         })
     }

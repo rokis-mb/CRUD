@@ -8,8 +8,8 @@ const AgentContextProvider = (props) => {
 
         AuthCode: "r1d3r",
         Flag: "i",
-        UserID: "1",
         AgentCode: "",
+        AgentID: "",
         FullName: "",
         UserName: "",
         Password: "",
@@ -25,17 +25,17 @@ const AgentContextProvider = (props) => {
         ProductType: "",
         Statement: "",
         Contact: "",
-        AllowApp: ""
+        AllowApp: "N"
     })
 
     const [updateAgent, setUpdateAgent] = useState({
         AuthCode: "r1d3r",
         Flag: "U",
-        UserID: "1",
         AgentID: "",
+        UserID: "",
         FullName: "",
         Image: "",
-        Address: "",
+        Address: "k",
         District: "",
         StarGrading: "",
         Academic: "",
@@ -45,11 +45,31 @@ const AgentContextProvider = (props) => {
         ProductCat: "",
         ProductType: "",
         Statement: "",
-        Contact: ""   
+        Contact: ""
     });
 
+    const [agentInfo, setAgentInfo] = useState({
+        AgentID: "",
+        FullName: "",
+        UserName: "",
+        AgentCode: "",
+        Image: "",
+        Address: "",
+        District: "",
+        GradingRate: "",
+        Academic: "",
+        Professional: "",
+        WorkExp: "",
+        ResponseTime: "",
+        ProdCategory: "",
+        ProdType: "",
+        Statement: "",
+        Contact: "",
+        CreatedDate: ""
+    })
+
     const contextValue = {
-        agent, setAgent, updateAgent, setUpdateAgent,
+        agent, setAgent, updateAgent, setUpdateAgent, agentInfo, setAgentInfo
     };
     return (
         <AgentContext.Provider value={contextValue}>
