@@ -12,60 +12,7 @@ const AgentTable = () => {
     const [selectedAgent, setSelectedAgent] = useState();
     const { updateAgent, agentInfo, setAgentInfo } = useContext(AgentContext);
     const [show, setShow] = useState(false);
-
-    const handleClose = () => {
-        setShow(false)
-        setSelectedAgent(null)
-    }
-
-    const handleOpen = (agent) => {
-        async function getAgentInfo() {
-            try {
-                const res = await fetch("https://testing.esnep.com/happyhomes/api/admin/agent", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Signature": "p0m76"
-                    },
-                    body: JSON.stringify({
-                        "AuthCode": "r1d3r",
-                        "Flag": "SI",
-                        "AgentID": agent.AgentID + ""
-                    }),
-                })
-                const data = await res.json();
-                setAgentInfo(data)
-            } catch (error) {
-                console.log(error)
-            }
-        }
-        getAgentInfo()
-        setSelectedAgent(agent)
-        console.log(selectedAgent)
-        setShow(true)
-    }
-
-    function handleEditButtonClick() {
-        handleClose();
-        updateAgentData(updateAgent);
-    }
-
-    async function updateAgentData(data) {
-        console.log(data)
-        try {
-            await fetch("https://testing.esnep.com/happyhomes/api/admin/agent", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Signature": "p0m76"
-                },
-                body: JSON.stringify(data)
-            })
-        } catch (error) {
-            console.log(error)
-        }
-
-    }
+    const [rpshow, setRPShow] = useState(false);
 
     // Fetching data from the api
 
@@ -105,6 +52,95 @@ const AgentTable = () => {
         getAgents();
     }, [])
 
+    const handleRPClose = () => {
+        setRPShow(false)
+        setSelectedAgent(null)
+    }
+
+    function handleRPButtonClick() {
+        handleRPClose();
+        resetPassword(selectedAgent);
+    }
+
+    async function resetPassword(data) {
+        console.log(data)
+        try {
+            await fetch("https://testing.esnep.com/happyhomes/api/admin/agent", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Signature": "p0m76"
+                },
+                body: JSON.stringify({
+                    "AuthCode": "r1d3r",
+                    "Flag": "RP",
+                    "AgentID": data.AgentID + "",
+                    "Password": "1"
+                })
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const handleRPOpen = (agent) => {
+        setSelectedAgent(agent)
+        console.log(selectedAgent)
+        setRPShow(true)
+    }
+
+    const handleClose = () => {
+        setShow(false)
+        setSelectedAgent(null)
+    }
+
+    const handleOpen = (agent) => {
+        async function getAgentInfo() {
+            try {
+                const res = await fetch("https://testing.esnep.com/happyhomes/api/admin/agent", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Signature": "p0m76"
+                    },
+                    body: JSON.stringify({
+                        "AuthCode": "r1d3r",
+                        "Flag": "SI",
+                        "AgentID": agent.AgentID + ""
+                    }),
+                })
+                const data = await res.json();
+                setAgentInfo(data)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        getAgentInfo()
+        // setSelectedAgent(agent)
+        setShow(true)
+    }
+
+    function handleEditButtonClick() {
+        handleClose();
+        updateAgentData(updateAgent);
+    }
+
+    async function updateAgentData(data) {
+        console.log(data)
+        try {
+            await fetch("https://testing.esnep.com/happyhomes/api/admin/agent", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Signature": "p0m76"
+                },
+                body: JSON.stringify(data)
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     const columns = [
         {
             name: "S.N",
@@ -143,7 +179,7 @@ const AgentTable = () => {
             cell: (row) => (
                 <div className='d-flex'>
                     <Button onClick={() => handleOpen(row)} className="btn btn-info">Edit</Button>&nbsp;
-                    <Button className="btn btn-warning">Reset Password</Button>
+                    <Button onClick={() => handleRPOpen(row)} className="btn btn-warning">Reset Password</Button>
                 </div>
             )
         },
@@ -151,7 +187,6 @@ const AgentTable = () => {
 
     return (
         <>
-
             <DataTable columns={columns} data={agent}
                 // pagination
                 fixedHeader
@@ -170,6 +205,23 @@ const AgentTable = () => {
                 <Modal.Footer>
                     <Button variant="primary" onClick={handleEditButtonClick}>
                         Edit
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal show={rpshow} onHide={handleRPClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Reset Password</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Are you sure you want to reset your password?
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="warning" onClick={handleRPButtonClick}>
+                        Yes, Reset it
+                    </Button>
+                    <Button variant="danger" onClick={handleRPClose}>
+                        No
                     </Button>
                 </Modal.Footer>
             </Modal>

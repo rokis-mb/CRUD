@@ -69,7 +69,7 @@ export default function EditAgentForm({ agent }) {
 
                 <Row >
                     <Col className='mb-2' md={4}>
-                        <Form.Select aria-label="Default select example " defaultValue={agentData?.District} onChange={(e) => setUpdateAgent({ ...updateAgent, District: e.target.value })}>
+                        <Form.Select aria-label="Default select example " onChange={(e) => setUpdateAgent({ ...updateAgent, District: e.target.value })}>
                             <option>District</option>
                             <option value="1">Kathmandu</option>
                             <option value="2">Bhaktapur</option>
