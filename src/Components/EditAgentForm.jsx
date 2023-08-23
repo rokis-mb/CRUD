@@ -24,7 +24,6 @@ export default function EditAgentForm({ agent }) {
                 AgentID: agentData?.AgentID + "",
                 UserID: agentData?.UserID,
                 FullName: agentData?.FullName,
-                Image: agentData?.Image,
                 Address: agentData?.Address,
                 District: agentData?.District ? agentData?.District.toString() : "", // Update this line
                 StarGrading: agentData?.StarGrading,
@@ -35,7 +34,7 @@ export default function EditAgentForm({ agent }) {
                 ProductCat: agentData?.ProductCat,
                 ProductType: agentData?.ProductType,
                 Statement: agentData?.Statement,
-                Contact: agentData?.Contact
+                Contact: agentData?.Contact,
             });
     }, [agentData, setUpdateAgent])
 
@@ -51,6 +50,7 @@ export default function EditAgentForm({ agent }) {
             reader.readAsDataURL(file);
         }
     };
+    
 
     return (
         <Form>

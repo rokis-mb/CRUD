@@ -110,8 +110,9 @@ const AgentTable = () => {
                     }),
                 })
                 const data = await res.json();
-                console.log(data)
+                console.log(btoa(data.Values[0].Image))
                 setAgentInfo(data)
+                
             } catch (error) {
                 console.log(error)
             }
@@ -127,7 +128,6 @@ const AgentTable = () => {
     }
 
     async function updateAgentData(data) {
-        console.log(data)
         try {
             await fetch("https://testing.esnep.com/happyhomes/api/admin/agent", {
                 method: "POST",
