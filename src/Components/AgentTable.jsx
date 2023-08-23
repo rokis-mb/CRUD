@@ -110,6 +110,7 @@ const AgentTable = () => {
                     }),
                 })
                 const data = await res.json();
+                console.log(data)
                 setAgentInfo(data)
             } catch (error) {
                 console.log(error)
